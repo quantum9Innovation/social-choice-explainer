@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Voting Model - Social Choice Explainer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 180px;
+            font-weight: bold;
+        }
+        select, input, button {
+            padding: 8px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #canvas-container {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            cursor: default;
+        }
+        .info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 5px;
+            border: 2px solid #333;
+        }
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .results h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+        }
+        .result-section h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .result-content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .winner {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c5f2d;
+        }
+        .no-voters {
+            color: #999;
+            font-style: italic;
+        }
+        .condorcet-none {
+            color: #d9534f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spatial Voting Model Visualization</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Number of Candidates:</label>
+                <input type="number" id="numCandidates" value="3" min="2" max="10">
+                <button onclick="resetSimulation()">Reset</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Number of Voters:</label>
+                <input type="number" id="numVoters" value="100" min="0" max="1000">
+            </div>
+            
+            <div class="control-group">
+                <label>Voter Distribution:</label>
+                <select id="voterDistribution">
+                    <option value="uniform">Uniform (Random)</option>
+                    <option value="normal">Normal (Gaussian)</option>
+                    <option value="clustered">Clustered</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="spawnVoters()">Initialize Voters</button>
+                <button onclick="clearVoters()">Clear Voters</button>
+                <button onclick="toggleRegions()">Toggle Regions</button>
+            </div>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="spatialCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="info">
+            <h3>Instructions:</h3>
+            <p>• Drag candidate points (colored circles) to move them around</p>
+            <p>• Choose a voter distribution and click "Initialize Voters" to add voter points</p>
+            <p>• Colored regions show which candidate each area supports (based on proximity)</p>
+            <p>• Small dots represent voters, large circles represent candidates</p>
+            
+            <h3>Legend:</h3>
+            <div id="legend" class="legend"></div>
+        </div>
+        
+        <div class="results" id="resultsPanel">
+            <h3>Election Results</h3>
+            
+            <div class="result-section">
+                <h4>Plurality Voting (First-Past-the-Post)</h4>
+                <div id="pluralityResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h4>Instant Runoff Voting (IRV)</h4>
+                <div id="irvResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h4>Borda Count</h4>
+                <div id="bordaResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h4>Condorcet Winner</h4>
+                <div id="condorcetResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="spatial-voting.js"></script>
+</body>
+</html>
