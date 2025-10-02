@@ -83,8 +83,8 @@
 - *Borda count*
 
   - Assign each choice a *score equal to its ranking*
-    - Here, first place ranking gets points = number of candidates
-    - Last place gets points = 1
+    - Here, first place ranking gets $"points" = "number of candidates" - 1$
+    - Last place gets $"points" = 0$
   
   - *Sum* up all the scores, and choose the candidate with the *highest score*
   
