@@ -84,6 +84,47 @@
             margin-right: 5px;
             border: 2px solid #333;
         }
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .results h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+        }
+        .result-section h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .result-content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .winner {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c5f2d;
+        }
+        .no-voters {
+            color: #999;
+            font-style: italic;
+        }
+        .condorcet-none {
+            color: #d9534f;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -131,6 +172,38 @@
             
             <h3>Legend:</h3>
             <div id="legend" class="legend"></div>
+        </div>
+        
+        <div class="results" id="resultsPanel">
+            <h3>Election Results</h3>
+            
+            <div class="result-section">
+                <h4>Plurality Voting (First-Past-the-Post)</h4>
+                <div id="pluralityResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h4>Instant Runoff Voting (IRV)</h4>
+                <div id="irvResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h4>Borda Count</h4>
+                <div id="bordaResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h4>Condorcet Winner</h4>
+                <div id="condorcetResult" class="result-content">
+                    <span class="no-voters">Initialize voters to see results</span>
+                </div>
+            </div>
         </div>
     </div>
     
