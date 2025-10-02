@@ -122,6 +122,12 @@
 
 - Voters rank candidates in order of distance; the so-called *Euclidean model*
 
+#pagebreak()
+
+https://social-choice-explainer.vercel.app/
+
+#image("./qrcode.png", width: 200pt)
+
 == Things to observe
 
 - Play with different geometries in the simulation (drag candidate points around)
